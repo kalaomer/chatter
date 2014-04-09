@@ -25,8 +25,9 @@ class UserThread(threading.Thread):
                 self.name = text.split(" ")[1]
                 self.send("you are now known as '%s'" % self.name)
             else:
-                name = "" if not self.name else self.name
-                self.send_all("%s: %s" % (name, text))
+                if text:
+                    name = "" if not self.name else self.name
+                    self.send_all("%s: %s" % (name, text))
 
             text = self.receive()
 
@@ -41,7 +42,11 @@ class UserThread(threading.Thread):
                 self.users[name].send(text.strip() + "\n")
 
     def receive(self):
-        result = self.client.recv(settings.SERVER.MAX_PACKAGE_SIZE)
+        result = None
+        try:
+            result = self.user_socket.recv(settings.SERVER.MAX_PACKAGE_SIZE)
+        except:
+            return None
         if result:
             result = result.strip()
         return result

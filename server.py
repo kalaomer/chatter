@@ -3,12 +3,20 @@
 
 import socket
 import logging
+
 import settings
 from user import UserThread
+
+
+logger = logging.getLogger("main")
+logger.warning("Configuration")
+logger.warning(settings.SERVER)
+
 
 class Server():
     def __init__(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.users = {}
         pass
 
     def ready(self):
@@ -27,20 +35,20 @@ class Server():
             while True:
                 try:
                     conn = self.socket.accept()[0]
-                except socket.error:
-                    break
+                except:
+                    continue
 
-                user_thread = UserThread(conn, users)
-                users[user_thread.getName()] = user_thread
+                user_thread = UserThread(conn, self.users)
+                self.users[user_thread.getName()] = user_thread
                 user_thread.start()
 
                 """
                 If user_thread is died, then remove from user list.
                 """
-                for user in users:
-                    if not user.isAlive():
-                        del users[user.getName()]
-                        
+                for user in self.users.values():
+                    if not user.is_alive():
+                        del self.users[user.getName()]
+
         except KeyboardInterrupt:
             logger.warning("Press CTRL+C for exit!")
 
@@ -48,18 +56,14 @@ class Server():
         logger.warning("Server is closed.")
 
 if __name__ == "__main__":
-    logger = logging.getLogger("main")
-    logger.warning("Configuration")
-    logger.warning(settings.SERVER)
 
-    users = {}
 
     server = Server()
     server.ready()
 
-    """
+    print ("""
     RUN FOREST, RUN!
     DON'T LOOK YOUR BACK!
-    """
+    """)
     server.run()
 
