@@ -6,6 +6,8 @@ import logging
 import settings
 from user import UserThread
 
+logger = None
+
 class Server():
     def __init__(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,7 +42,7 @@ class Server():
                 for user in users:
                     if not user.isAlive():
                         del users[user.getName()]
-                        
+
         except KeyboardInterrupt:
             logger.warning("Press CTRL+C for exit!")
 
