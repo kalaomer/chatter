@@ -23,11 +23,13 @@ class Server():
     def listen(self):
         while True:
             try:
-                message = self.socket.recv(settings.SERVER.MAX_PACKAGE_SIZE)
+                conn, addr = self.socket.accept()
             except socket.error:
                 break
 
-    def make_login(self):
+            self.make_login(conn)
+
+    def make_login(self, conn):
         """Logging on Server"""
         pass
 
@@ -37,7 +39,7 @@ if __name__ == "__main__":
     logger.warning("Configuration")
     logger.warning(settings.SERVER)
 
-    clients = {}
+    users = {}
 
     server = Server()
 
