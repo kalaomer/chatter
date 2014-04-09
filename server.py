@@ -3,6 +3,7 @@
 
 import socket
 import logging
+from user import UserThread
 
 import settings
 
@@ -23,15 +24,20 @@ class Server():
     def listen(self):
         while True:
             try:
-                conn, addr = self.socket.accept()
+                conn = self.socket.accept()[0]
             except socket.error:
                 break
 
-            self.make_login(conn)
+            user_thread = UserThread(conn)
+            users[user_thread.getName()] = user_thread
+            user_thread.start()
 
-    def make_login(self, conn):
-        """Logging on Server"""
-        pass
+            """
+            If user_thread is died, then remove from user list.
+            """
+            for user in users:
+                if not user.isAlive():
+                    del users[user.getName()]
 
 
 if __name__ == "__main__":
