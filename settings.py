@@ -10,4 +10,10 @@ class SERVER:
     def __init__(self):
         pass
 
+    def __str__(self):
+        template = "{0}:{1} LISTEN: {2} MAX_PACKAGE_SIZE:{3}"
+        return template.format(self.HOST,
+                               self.PORT,
+                               self.LISTEN,
+                               self.MAX_PACKAGE_SIZE)
 

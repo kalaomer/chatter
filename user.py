@@ -1,15 +1,22 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
-import settings
 import socket
 
-class User():
-    def __init__(self, client_socket):
-        self.client_socket = client_socket
+import settings
 
-    # This function runs in thread
+
+class User():
+    def __init__(self, user_socket):
+        self.user_socket = user_socket
+
+
     def listen(self):
+        """
+        This function runs in a thread
+        """
         while True:
             try:
-                message = self.client_socket.recv(settings.SERVER.MAX_PACKAGE_SIZE)
+                message = self.user_socket.recv(settings.SERVER.MAX_PACKAGE_SIZE)
             except socket.error:
                 break
