@@ -15,7 +15,7 @@ class Server():
         try:
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.socket.setblocking(False)
-            self.socket.bind(settings.SERVER.HOST, settings.SERVER.PORT)
+            self.socket.bind( (settings.SERVER.HOST, settings.SERVER.PORT) )
             self.socket.listen(settings.SERVER.LISTEN)
 
             logger.warning("Server is ready!")
@@ -40,10 +40,12 @@ class Server():
                 for user in users:
                     if not user.isAlive():
                         del users[user.getName()]
+                        
         except KeyboardInterrupt:
             logger.warning("Press CTRL+C for exit!")
 
         self.socket.close()
+        logger.warning("Server is closed.")
 
 if __name__ == "__main__":
     logger = logging.getLogger("main")
