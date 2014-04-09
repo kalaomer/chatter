@@ -1,29 +1,28 @@
-__author__ = 'kalaomer'
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
-# Server kodları.
-
-from threading import Thread
 import socket
 import logging
-from config import config
 
-# Logger
+from settings import SERVER
+
+
 logger = logging.getLogger("main")
+logger.warning("Configuration")
+logger.warning(SERVER)
 
-# Configration'ı yayınla
-logger.warning("Configration")
-logger.warning(config())
 
 class Client():
-    def __init__(self, clientSocket):
-        self.clientSocket = clientSocket
+    def __init__(self, client_socket):
+        self.client_socket = client_socket
 
     def listen(self):
         while True:
             try:
-                message = self.clientSocket.recv(MAX_PACKAGE_SIZE)
+                message = self.client_socket.recv(SERVER.MAX_PACKAGE_SIZE)
             except socket.error:
                 break
+
 
 class Server():
     def __init__(self):
@@ -33,20 +32,21 @@ class Server():
     def ready(self):
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.setblocking(False)
-        self.socket.bind(HOST, PORT)
-        self.socket.listen(LISTEN)
+        self.socket.bind(SERVER.HOST, SERVER.PORT)
+        self.socket.listen(SERVER.LISTEN)
 
         print("Server is ready!")
 
     def listen(self):
         while True:
             try:
-                message = self.socket.recv(MAX_PACKAGE_SIZE)
+                message = self.socket.recv(SERVER.MAX_PACKAGE_SIZE)
             except socket.error:
                 break
 
-    """Server'a giriş işlemi yapılıyor"""
-    def makeLogin(self):
+    """Logging on Server"""
+
+    def make_login(self):
         pass
 
 
