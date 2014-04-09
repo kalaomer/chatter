@@ -3,10 +3,8 @@
 
 import socket
 import logging
-from user import UserThread
-
 import settings
-
+from user import UserThread
 
 class Server():
     def __init__(self):
@@ -14,31 +12,38 @@ class Server():
         pass
 
     def ready(self):
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.socket.setblocking(False)
-        self.socket.bind(settings.SERVER.HOST, settings.SERVER.PORT)
-        self.socket.listen(settings.SERVER.LISTEN)
+        try:
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.socket.setblocking(False)
+            self.socket.bind(settings.SERVER.HOST, settings.SERVER.PORT)
+            self.socket.listen(settings.SERVER.LISTEN)
 
-        print("Server is ready!")
+            logger.warning("Server is ready!")
+        except:
+            logger.error("Socket error!")
 
-    def listen(self):
-        while True:
-            try:
-                conn = self.socket.accept()[0]
-            except socket.error:
-                break
+    def run(self):
+        try:
+            while True:
+                try:
+                    conn = self.socket.accept()[0]
+                except socket.error:
+                    break
 
-            user_thread = UserThread(conn)
-            users[user_thread.getName()] = user_thread
-            user_thread.start()
+                user_thread = UserThread(conn, users)
+                users[user_thread.getName()] = user_thread
+                user_thread.start()
 
-            """
-            If user_thread is died, then remove from user list.
-            """
-            for user in users:
-                if not user.isAlive():
-                    del users[user.getName()]
+                """
+                If user_thread is died, then remove from user list.
+                """
+                for user in users:
+                    if not user.isAlive():
+                        del users[user.getName()]
+        except KeyboardInterrupt:
+            logger.warning("Press CTRL+C for exit!")
 
+        self.socket.close()
 
 if __name__ == "__main__":
     logger = logging.getLogger("main")
@@ -48,6 +53,11 @@ if __name__ == "__main__":
     users = {}
 
     server = Server()
+    server.ready()
 
-    print("Server is ready!")
+    """
+    RUN FOREST, RUN!
+    DON'T LOOK YOUR BACK!
+    """
+    server.run()
 

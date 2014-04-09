@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 class SERVER:
-    HOST = ''
-    PORT = 8000
+    HOST = '127.0.0.1'
+    PORT = 8008
     LISTEN = 4
     MAX_PACKAGE_SIZE = 1024
 
