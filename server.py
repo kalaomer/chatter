@@ -42,8 +42,9 @@ class Server():
 
                 user_thread = UserThread(conn, self)
             #    user_thread.setName(os.urandom(8))
-                user_thread.setName(len(self.users))
+                user_thread.setName('user_%s' % (len(self.users) + 1))
                 user_thread.start()
+                user_thread.send('>> Your name is \'%s\'' % user_thread.getName())
                 self.users[user_thread.getName()] = user_thread
 
             #    self.users.update({user_thread.getName(): user_thread})
