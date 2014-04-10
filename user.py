@@ -27,32 +27,39 @@ class UserThread(threading.Thread):
                 connected = False
             elif self.is_name_command(text):
                 self.name = text.split(" ")[1]
-                self.send("you are now known as '%s'" % self.name)
+                self.send('you are now known as \'%s\'' % self.name)
             else:
-                name = "" if not self.name else self.name
-                self.send_all("%s: %s" % (name, text))
+                name = '' if not self.name else self.name
+                self.broadcast('%s: %s' % (name, text))
 
             text = self.receive()
 
         self.user_socket.close()
 
     def send(self, text):
-        self.user_socket.send(text.strip() + "\n")
+        print("test type: %s" % type(text))
+        text = text + "\n"
+        self.user_socket.send(text.encode())
 
-    def send_all(self, text):
+    def broadcast(self, text):
         for name in self.server.users.keys():
             if name != self.getName():
-                self.server.users[name].send(text.strip() + "\n")
+                self.server.users[name].send(text)
+            #    print("%s is say to %s this message %s" % (self.getName(), name, text.strip()))
 
     def receive(self):
-        result = self.user_socket.recv(settings.SERVER.MAX_PACKAGE_SIZE)
-        if result:
-            result = result.strip()
-        return result
+        message = self.user_socket.recv(settings.SERVER.MAX_PACKAGE_SIZE)
+        if not message:
+            # Empty string is given on disconnect.
+            del self.server.users[self.getName()]
+            return ''
+        else:
+            print("%s is talking! text: %s" % (self.getName(), message.strip()))
+            return message.strip()
 
     @staticmethod
     def is_name_command(text):
-        if text > 5 and text[:5] == "name ":
+        if text[:5] == "name ":
             return len(text.split(" ")[1]) > 0
         else:
             return False

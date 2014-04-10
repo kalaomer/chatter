@@ -5,6 +5,7 @@ import socket
 import logging
 import settings
 import time
+import os
 from user import UserThread
 
 logger = logging.getLogger("main")
@@ -40,21 +41,31 @@ class Server():
                     continue
 
                 user_thread = UserThread(conn, self)
-                self.users[user_thread.getName()] = user_thread
+            #    user_thread.setName(os.urandom(8))
+                user_thread.setName(len(self.users))
                 user_thread.start()
+                self.users[user_thread.getName()] = user_thread
+
+            #    self.users.update({user_thread.getName(): user_thread})
+
+                print("New user connected!")
+                print("User list!")
+                print(repr(self.users))
 
                 """
                 If user_thread is died, then remove from user list.
                 """
+                """
                 for user in self.users:
-                    if not user.is_alive():
+                    if not user.isAlive():
                         del self.users[user.getName()]
-                        
+                """
         except KeyboardInterrupt:
             logger.warning("Press CTRL+C for exit!")
 
         except Exception as err:
             logger.error(err)
+            raise err
 
         self.socket.close()
         logger.warning("Server is closed.")
@@ -69,3 +80,4 @@ if __name__ == "__main__":
     DON'T LOOK YOUR BACK!
     """
     server.run()
+    pass
