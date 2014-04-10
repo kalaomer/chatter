@@ -11,7 +11,6 @@ class UserThread(threading.Thread):
     def __init__(self, user_socket, server):
         threading.Thread.__init__(self)
         self.user_socket = user_socket
-        self.name = None
         self.server = server
 
     def run(self):
@@ -22,22 +21,27 @@ class UserThread(threading.Thread):
 
             time.sleep(0.1)
 
-            if text in ["quit", "bye"]:
+            if text in ["\quit"]:
                 self.send('you shall never be forgotten!')
                 connected = False
+                break
             elif self.is_name_command(text):
-                self.name = text.split(" ")[1]
-                self.send('you are now known as \'%s\'' % self.name)
+                self.update_name(text.split(" ")[1])
+                self.send('you are now known as \'%s\'' % self.getName())
             else:
-                name = '' if not self.name else self.name
-                self.broadcast('%s: %s' % (name, text))
+                self.broadcast('%s: %s' % (self.getName(), text))
 
             text = self.receive()
 
-        self.user_socket.close()
+        self.kill_thread()
+
+    def update_name(self, new_name):
+        del self.server.users[self.getName()]
+
+        self.setName(new_name)
+        self.server.users[self.getName()] = self
 
     def send(self, text):
-        print("test type: %s" % type(text))
         text = text + "\n"
         self.user_socket.send(text.encode())
 
@@ -47,15 +51,20 @@ class UserThread(threading.Thread):
                 self.server.users[name].send(text)
             #    print("%s is say to %s this message %s" % (self.getName(), name, text.strip()))
 
+    # seppuku!
+    def kill_thread(self):
+        self.user_socket.close()
+        del self.server.users[self.getName()]
+        self._stop()
+
+    # return utf-8 text!
     def receive(self):
         message = self.user_socket.recv(settings.SERVER.MAX_PACKAGE_SIZE)
         if not message:
             # Empty string is given on disconnect.
-            del self.server.users[self.getName()]
-            return ''
+            self.kill_thread()
         else:
-            print("%s is talking! text: %s" % (self.getName(), message.strip()))
-            return message.strip()
+            return message.strip().decode('utf-8')
 
     @staticmethod
     def is_name_command(text):
