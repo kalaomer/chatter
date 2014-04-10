@@ -5,19 +5,23 @@ import threading
 
 import settings
 
+import time
 
 class UserThread(threading.Thread):
-    def __init__(self, user_socket, users):
+    def __init__(self, user_socket, server):
         threading.Thread.__init__(self)
         self.user_socket = user_socket
-        self.users = users
         self.name = None
+        self.server = server
 
     def run(self):
         connected = True
 
         text = self.receive()
         while connected:
+
+            time.sleep(0.1)
+
             if text in ["quit", "bye"]:
                 self.send('you shall never be forgotten!')
                 connected = False
@@ -36,12 +40,12 @@ class UserThread(threading.Thread):
         self.user_socket.send(text.strip() + "\n")
 
     def send_all(self, text):
-        for name in self.users.keys():
+        for name in self.server.users.keys():
             if name != self.getName():
-                self.users[name].send(text.strip() + "\n")
+                self.server.users[name].send(text.strip() + "\n")
 
     def receive(self):
-        result = self.client.recv(settings.SERVER.MAX_PACKAGE_SIZE)
+        result = self.user_socket.recv(settings.SERVER.MAX_PACKAGE_SIZE)
         if result:
             result = result.strip()
         return result
