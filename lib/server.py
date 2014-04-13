@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import socket
-import logging
 import time
 
 import settings
-from lib import lang
-from lib.user import UserThread
+from lib.users import users
+from lib.logger import logger
 
 
 class Server():
@@ -16,10 +15,7 @@ class Server():
 
     def __init__(self):
 
-        logging.warning("Server just start building!")
-
-        self.logger = logging.getLogger("server")
-        self.logger.warning('Configuration: ' + str(settings.SERVER))
+        logger.warning('Configuration: ' + str(settings.SERVER))
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -29,9 +25,9 @@ class Server():
             self.socket.bind((settings.SERVER.HOST, settings.SERVER.PORT))
             self.socket.listen(settings.SERVER.MAX_CONNECTION)
 
-            self.logger.warning("Server is ready!")
+            logger.warning("Server is ready!")
         except Exception as err:
-            self.logger.error(err)
+            logger.error(err)
 
     def run(self):
         try:
@@ -44,19 +40,13 @@ class Server():
                 except Exception as err:
                     continue
 
-                user_thread = UserThread(conn, self)
-            #    user_thread.setName(os.urandom(8))
-                user_thread.setName('user_%s' % (len(self.users) + 1))
-                user_thread.start()
-                user_thread.send_text(lang.get_welcome(user_thread.getName()))
-            #    user_thread.send_text('>> Your current name is \'%s\'' % user_thread.getName())
-                self.users[user_thread.getName()] = user_thread
+                users.create_user(conn)
 
             #    self.users.update({user_thread.getName(): user_thread})
 
-                self.logger.warning("New user connected!")
-                self.logger.warning("User list!")
-                self.logger.warning(repr(self.users))
+                logger.warning("New user connected!")
+                logger.warning("User list!")
+                logger.warning(repr(self.users))
 
                 """
                 If user_thread is died, then remove from user list.
@@ -67,11 +57,11 @@ class Server():
                         del self.users[user.getName()]
                 """
         except KeyboardInterrupt:
-            self.logger.warning("Press CTRL+C for exit!")
+            logger.warning("Press CTRL+C for exit!")
 
         except Exception as err:
-            self.logger.error(err)
+            logger.error(err)
             raise err
 
         self.socket.close()
-        self.logger.warning("Server is closed.")
+        logger.warning("Server is closed.")

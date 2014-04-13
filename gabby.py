@@ -1,13 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from lib import server
+from lib.server import Server
 
+
+class Gabby(Server):
+    VERSION = "0.0.1"
+    pass
 
 if __name__ == "__main__":
 
     # Create Gabby.
-    gabby = server.Server()
+    gabby = Gabby()
 
     """
     RUN FOREST, RUN!

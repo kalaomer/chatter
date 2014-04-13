@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from socket import socket
+from lib.user import UserThread
+from lib import lang
 
 
 class UserList():
@@ -9,15 +11,49 @@ class UserList():
     # UserThread Objects
     list = {}
 
+    # For generate random nick
+    _last_id = 0
+
     def __init__(self):
         pass
 
-    def create_user(self, client):
+    def create_user(self, socket):
         """
         :type client: socket
         """
 
-        pass
+        user = UserThread(socket)
+
+        nick = user.nick = self.generate_random_nick()
+
+        self.list[nick] = user
+
+        user.start()
+
+    def kill_user(self, user_nick):
+        """
+        :type user_nick: str
+        """
+        if self.is_user(user_nick):
+            user = self.list[user_nick]
+            user.close()
+            user.join()
+
+    def is_user(self, user_nick):
+        return user_nick in self.list
+
+    def generate_random_nick(self):
+
+        self._last_id += 1
+        last_id = self._last_id
+        user_name = lang.create_clause('random_user_name', last_id)
+
+        while user_name in self.list:
+            self._last_id += 1
+            last_id = self._last_id
+            user_name = lang.create_clause('random_user_name', last_id)
+
+        return user_name
 
     def broadcast(self, message):
         """
@@ -25,14 +61,8 @@ class UserList():
         :type message: str
         """
 
-        for user in self.users:
+        for user in self.list:
             user.send_text(message)
-        pass
-
-    def get_user(self, id):
-        pass
-
-    def kill_user(self):
         pass
 
 users = UserList()
