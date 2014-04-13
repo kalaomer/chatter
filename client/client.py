@@ -1,8 +1,13 @@
 __author__ = 'kalaomer'
 
+import sys
+sys.path.append('..')
+
 import threading
 import time
 import socket
+
+import settings
 
 class Listener(threading.Thread):
     def __init__(self, socket):
@@ -20,29 +25,38 @@ class Listener(threading.Thread):
                 print(message)
 
     def receive(self):
-        result = self.client.recv(settings.SERVER.MAX_PACKAGE_SIZE)
-        if result:
-            result = result.strip()
+        result = self.socket.recv(settings.SERVER.MAX_PACKAGE_SIZE)
+
+        if result is None:
+            self.kill_thread()
+            print('Connection lost!')
+        else:
+            result = result.strip().decode()
         return result
+
+    def kill_thread(self):
+        self.socket.close()
+        self._stop()
 
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-socket.create_connection(("localhost", 8088), 0)
-try:
-    pass
-except Exception as err:
-    print(err)
-    exit()
+client.connect((settings.SERVER.HOST, settings.SERVER.PORT))
 
 listener = Listener(client)
 listener.run()
 
-while True:
-    message = input()
-    client.send(message)
+try:
+    while True:
+        message = input()
+        client.sendall(message)
 
-    if message == "gg":
-        client.close()
-        exit()
-    pass
+        if message == "\quit":
+            client.close()
+            exit()
+        pass
+except KeyboardInterrupt as err:
+    raise err
+
+except Exception as err:
+    raise err

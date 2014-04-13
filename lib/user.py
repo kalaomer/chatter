@@ -8,6 +8,13 @@ import settings
 import time
 
 class UserThread(threading.Thread):
+
+    # User nick.
+    nick = ''
+
+    # User current data for commands!
+    data = {}
+
     def __init__(self, user_socket, server):
         threading.Thread.__init__(self)
         self.user_socket = user_socket
@@ -22,12 +29,13 @@ class UserThread(threading.Thread):
             time.sleep(0.1)
 
             if text in ["\quit"]:
-                self.send('you shall never be forgotten!')
+                self.send_text('>> You shall never be forgotten!')
+                self.broadcast('>> %s is disconnected!' % (self.getName()))
                 connected = False
                 break
             elif self.is_name_command(text):
                 self.update_name(text.split(" ")[1])
-                self.send('you are now known as \'%s\'' % self.getName())
+                self.send_text('you are now known as \'%s\'' % self.getName())
             else:
                 self.broadcast('%s: %s' % (self.getName(), text))
 
@@ -41,14 +49,20 @@ class UserThread(threading.Thread):
         self.setName(new_name)
         self.server.users[self.getName()] = self
 
-    def send(self, text):
+    def send(self, bytes):
+        """
+        :type bytes: bytearray
+        """
+        self.user_socket.sendall(bytes)
+
+    def send_text(self, text):
         text = text + "\n"
         self.user_socket.send(text.encode())
 
     def broadcast(self, text):
         for name in self.server.users.keys():
             if name != self.getName():
-                self.server.users[name].send(text)
+                self.server.users[name].send_text(text)
             #    print("%s is say to %s this message %s" % (self.getName(), name, text.strip()))
 
     # seppuku!
@@ -64,7 +78,7 @@ class UserThread(threading.Thread):
             # Empty string is given on disconnect.
             self.kill_thread()
         else:
-            return message.strip().decode('utf-8')
+            return message.strip().decode('utf-8', 'ignore')
 
     @staticmethod
     def is_name_command(text):
