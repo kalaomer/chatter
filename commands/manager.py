@@ -73,7 +73,7 @@ class CommandManager():
 
     # noinspection PyBroadException
     @staticmethod
-    def parse_command_clause(command) -> [] or False:
+    def parse_command_clause(command):
         """
         :type command: str
         """
