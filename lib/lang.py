@@ -23,8 +23,8 @@ If you want to help, please tell me /help
     # When user change own name.
     'new_user_name':
         """
-Your name has been changed!
-Your current name is '{0}'.
+>>Your name has been changed!
+>>Your current name is '{0}'.
         """,
 
     # Online user count.
@@ -33,7 +33,6 @@ Your current name is '{0}'.
 {0} people online now!
         """,
 
-    # Message from someone for everyone!
     'message':
         '@{0}: {1}',
 
@@ -55,13 +54,13 @@ Your current name is '{0}'.
     'random_user_name':
         'user_{0}',
 
-    'help_command_info':
+    'help_command_doc':
         """
 <Command help for \'{}\'>
 {}
         """,
 
-    'help_command_info_not_set':
+    'help_command_doc_not_set':
         '<Command help for \'{}\' info is None>',
 
     'command_list':
@@ -73,7 +72,7 @@ Your current name is '{0}'.
     'wrong_nick_change':
         '<Wrong nick! Nick name can only have a-z, 0-9, -, _ and max 12 char!>',
 
-    'Wrong_nick_being_used':
+    'wrong_nick_being_used':
         '<Nick can\'t change, because it is being used! Tyr another one.>',
 
     'quit':

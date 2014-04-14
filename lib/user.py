@@ -63,10 +63,3 @@ class UserThread(threading.Thread):
             self.close()
         else:
             return message.strip().decode('utf-8', 'ignore')
-
-    @staticmethod
-    def is_name_command(text):
-        if text[:5] == "name ":
-            return len(text.split(" ")[1]) > 0
-        else:
-            return False

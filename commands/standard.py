@@ -18,7 +18,7 @@ def broadcast(user, command, ignore=None, send_user=False):
         if not _nick in ignore:
             users.list[_nick].send_text(lang.create_clause('broadcast', user.nick, command))
 
-broadcast.info = """Broadcast function is for send message to anyone.
+broadcast.__doc__ = """Broadcast function is for send message to anyone.
 
 Exp: /broadcast Hi!
 """
@@ -26,48 +26,49 @@ Exp: /broadcast Hi!
 commands['broadcast'] = broadcast
 
 
+# Todo: Write this command.
 # This command send text to another person, not for anyone
 def message(user, command):
     pass
 
-message.info = """
+message.__doc__ = """
 
 """
 
 commands['msg'] = message
 
 
-# This function name is _help, because help is used.
-def _help(user, command):
+# This function name is help_, because help is used.
+def help_(user, command):
     from commands.manager import command_manager
 
     if command == "":
-        return user.send_text(_help.info)
+        return user.send_text(help_.__doc__)
 
     if command_manager.is_command(command) is True:
         command_function = command_manager.commands[command]
 
-        if hasattr(command_function, 'info'):
-            user.send_text(lang.create_clause('help_command_info', command, command_function.info))
+        if getattr(command_function, '__doc__') is not None:
+            user.send_text(lang.create_clause('help_command_doc', command, command_function.__doc__))
         else:
-            user.send_text(lang.create_clause('help_command_info_not_set', command))
+            user.send_text(lang.create_clause('help_command_doc_not_set', command))
     else:
         user.send_text(lang.create_clause('wrong_command_name', command))
 
-_help.info = """
+help_.__doc__ = """
 Welcome to Gabby! This tool is for communication.
 
 You can get command list with '/commands' clause!
 """
 
-commands['help'] = _help
+commands['help'] = help_
 
 
 def command_list(user, command):
     from commands.manager import command_manager
     user.send_text(lang.create_clause('command_list', '\n'.join(command_manager.commands)))
 
-command_list.info = """
+command_list.__doc__ = """
 List all Commands!
 """
 
@@ -104,9 +105,14 @@ def change_user_name(user, command):
 commands['change-name'] = change_user_name
 
 
-def _quit(user, command):
+# This function name is quit_, because quit is used.
+def quit_(user, command):
     from lib.users import users
 
     users.kill_user(user.nick)
 
-commands['quit'] = _quit
+quit_.__doc__ = """
+Make disconnect.
+"""
+
+commands['quit'] = quit_

@@ -6,7 +6,6 @@ from lib import lang
 import re
 
 from commands import standard
-from lib.logger import logger
 
 
 class CommandManager():

@@ -36,6 +36,8 @@ class UserList():
         """
         :type user_nick: str
         """
+
+        # TODO A bug is here! When user quit, then an error here!
         if self.is_user(user_nick):
             self.list[user_nick].user_socket.close()
             del self.list[user_nick]
