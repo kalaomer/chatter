@@ -7,7 +7,7 @@ class ServerConfiguration:
     PORT = 8088
     MAX_CONNECTION = 4
     MAX_PACKAGE_SIZE = 1024
-    NAME = "Socivy"
+    NAME = "Gabby"
 
     def __init__(self):
         pass

@@ -24,19 +24,15 @@ class UserThread(threading.Thread):
         threading.Thread.__init__(self)
         self.user_socket = user_socket
 
-        self.send_text(lang.get_welcome(self.nick))
-
     def run(self):
         connected = True
 
-        text = self.receive()
+        self.send_text(lang.get_welcome(self.nick))
 
         while connected:
             time.sleep(0.1)
-            self.run_command(text)
             text = self.receive()
-
-        users.kill_user(self.nick)
+            self.run_command(text)
 
     def run_command(self, command_text):
         return command_manager.execute(self, command_text)
@@ -56,7 +52,8 @@ class UserThread(threading.Thread):
 
     # seppuku!
     def close(self):
-        self.user_socket.close()
+        from lib.users import users
+        users.kill_user(self.nick)
 
     # return utf-8 text!
     def receive(self):

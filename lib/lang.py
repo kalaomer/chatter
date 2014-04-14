@@ -74,7 +74,12 @@ Your current name is '{0}'.
         '<Wrong nick! Nick name can only have a-z, 0-9, -, _ and max 12 char!>',
 
     'Wrong_nick_being_used':
-        '<Nick can\'t change, because it is being used! Tyr another one.>'
+        '<Nick can\'t change, because it is being used! Tyr another one.>',
+
+    'quit':
+    """
+Goodbye {}, we shall never forget you!
+    """
 
 }
 

@@ -102,3 +102,11 @@ def change_user_name(user, command):
         return user.send_text(lang.create_clause('wrong_nick_change'))
 
 commands['change-name'] = change_user_name
+
+
+def _quit(user, command):
+    from lib.users import users
+
+    users.kill_user(user.nick)
+
+commands['quit'] = _quit

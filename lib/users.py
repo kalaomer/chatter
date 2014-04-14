@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import threading
+
 from socket import socket
 from lib.user import UserThread
 from lib import lang
@@ -35,9 +37,8 @@ class UserList():
         :type user_nick: str
         """
         if self.is_user(user_nick):
-            user = self.list[user_nick]
-            user.close()
-            user.join()
+            self.list[user_nick].user_socket.close()
+            del self.list[user_nick]
 
     def is_user(self, user_nick):
         return user_nick in self.list
