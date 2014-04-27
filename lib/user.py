@@ -11,6 +11,8 @@ from lib import lang
 
 from commands.manager import command_manager
 
+from lib.logger import logger
+
 
 class UserThread(threading.Thread):
 
@@ -20,19 +22,25 @@ class UserThread(threading.Thread):
     # User current data for commands!
     data = {}
 
+    # Thread status.
+    keep_running = True
+
     def __init__(self, user_socket):
         threading.Thread.__init__(self)
         self.user_socket = user_socket
 
     def run(self):
-        connected = True
+
+        logger.warning('Thread is starting for "{}"'.format(self.nick))
 
         self.send_text(lang.get_welcome(self.nick))
 
-        while connected:
+        while self.keep_running:
             time.sleep(0.1)
             text = self.receive()
             self.run_command(text)
+
+        logger.warning('Thread is stopped for "{}"'.format(self.nick))
 
     def run_command(self, command_text):
         return command_manager.execute(self, command_text)
@@ -62,4 +70,4 @@ class UserThread(threading.Thread):
             # Empty string is given on disconnect.
             self.close()
         else:
-            return message.strip().decode('utf-8', 'ignore')
+            return message.strip().decode('utf-8', errors='ignore')

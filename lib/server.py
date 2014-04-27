@@ -11,7 +11,10 @@ from lib.logger import logger
 
 class Server():
 
-    users = {}
+    """
+    Server status!
+    """
+    keepRunning = True
 
     def __init__(self):
 
@@ -31,7 +34,7 @@ class Server():
 
     def run(self):
         try:
-            while True:
+            while self.keepRunning:
 
                 time.sleep(0.1)
 
@@ -42,20 +45,6 @@ class Server():
 
                 users.create_user(conn)
 
-            #    self.users.update({user_thread.getName(): user_thread})
-
-                logger.warning("New user connected!")
-                logger.warning("User list!")
-                logger.warning(repr(self.users))
-
-                """
-                If user_thread is died, then remove from user list.
-                """
-                """
-                for user in self.users:
-                    if not user.isAlive():
-                        del self.users[user.getName()]
-                """
         except KeyboardInterrupt:
             logger.warning("Press CTRL+C for exit!")
 

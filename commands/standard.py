@@ -91,7 +91,7 @@ def change_user_name(user, command):
             raise Exception()
 
         if nick in users.list.keys():
-            return user.send_text(lang.create_clause('Wrong_nick_being_used'))
+            return user.send_text(lang.create_clause('wrong_nick_being_used'))
 
         del users.list[user.nick]
 

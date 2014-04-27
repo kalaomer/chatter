@@ -88,6 +88,7 @@ def create_clause(template_name, *args):
     :type template_name: str
     """
     if template_name in templates.keys():
+        # Todo: Bug! for python2.7 :/ ascii codec error!
         return (templates[template_name].format(*args)).strip()
 
     raise Exception("Unknown template!")

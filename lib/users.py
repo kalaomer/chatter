@@ -19,16 +19,18 @@ class UserList():
     def __init__(self):
         pass
 
-    def create_user(self, socket):
+    def create_user(self, sck):
         """
-        :type client: socket
+        :type sck: socket
         """
 
-        user = UserThread(socket)
+        user = UserThread(sck)
 
         nick = user.nick = self.generate_random_nick()
 
         self.list[nick] = user
+
+        user.setDaemon(True)
 
         user.start()
 
@@ -40,6 +42,8 @@ class UserList():
         # TODO A bug is here! When user quit, then an error here!
         if self.is_user(user_nick):
             self.list[user_nick].user_socket.close()
+            self.list[user_nick].keep_running = False
+        #   self.list[user_nick].join()
             del self.list[user_nick]
 
     def is_user(self, user_nick):

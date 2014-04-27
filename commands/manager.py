@@ -7,6 +7,8 @@ import re
 
 from commands import standard
 
+from lib.logger import logger
+
 
 class CommandManager():
 
@@ -63,11 +65,11 @@ class CommandManager():
         """
 
         error_clause = lang.create_clause(template, *args)
-        """
+
         if 'log' in kwargs:
             if kwargs['log'] is True:
-                gabby.logger.warning(error_clause)
-        """
+                logger.warning(error_clause)
+
         user.send_text(error_clause)
 
     # noinspection PyBroadException
